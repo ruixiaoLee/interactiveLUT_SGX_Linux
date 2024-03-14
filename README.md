@@ -106,6 +106,10 @@ bin/makeQuery (4 times, bit 12 14 16 18)
 bin/makeQueryTwo (3 times, bit 8 10 12)
 bin/makeQueryThree (3 times, bit 4 6 8)
 ```
+In `decryptor/`, run and test runtime and memory usage:
+```
+bin/checkResult
+```
 
 Change the number of thread need to edit `demo.hpp`, `#define NF NUM_THREAD`.<br>
 Only `makeQuery.cpp` adopted multi-thread.
