@@ -121,8 +121,8 @@ int main(int argc, char *argv[]){
 
 //thread work
   auto startEva =  chrono::high_resolution_clock::now();
-  // omp_set_num_threads(NF);
-  // #pragma omp parallel for
+  omp_set_num_threads(NF);
+  #pragma omp parallel for
   for(int64_t i=0 ; i<row_count ; i++){
     Ciphertext res1 = ciphertext_query1;
     Ciphertext res2 = ciphertext_query2;

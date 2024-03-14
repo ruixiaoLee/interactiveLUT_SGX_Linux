@@ -15,13 +15,13 @@ add_executable(makeInputTwo makeInputTwo.cpp)
 add_executable(makeInputThree makeInputThree.cpp)
 
 add_executable(searchInputTwo searchInputTwo.cpp)
-# add_executable(extractOutputTwo extractOutputTwo.cpp)
+add_executable(extractOutputTwo extractOutputTwo.cpp)
 
 add_executable(searchInputThree searchInputThree.cpp)
-# add_executable(extractOutputThree extractOutputThree.cpp)
+add_executable(extractOutputThree extractOutputThree.cpp)
 
 add_executable(searchInput searchInput.cpp)
-# add_executable(extractOutput extractOutput.cpp)
+add_executable(extractOutput extractOutput.cpp)
 
 
 
@@ -41,10 +41,10 @@ target_link_libraries(makeInputThree SEAL::seal)
 target_link_libraries(makeInput SEAL::seal)
 
 target_link_libraries(searchInputTwo SEAL::seal)
-# target_link_libraries(extractOutputTwo SEAL::seal)
+target_link_libraries(extractOutputTwo SEAL::seal)
 
 target_link_libraries(searchInputThree SEAL::seal)
-# target_link_libraries(extractOutputThree SEAL::seal)
+target_link_libraries(extractOutputThree SEAL::seal)
 
 target_link_libraries(searchInput SEAL::seal)
-# target_link_libraries(extractOutput SEAL::seal)
+target_link_libraries(extractOutput SEAL::seal)

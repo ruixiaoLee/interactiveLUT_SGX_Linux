@@ -11,7 +11,7 @@ set(SEAL_USE_CXX17 OFF)
 set(CMAKE_BUILD_TYPE Release)
 
 add_executable(keyGeneration keyGeneration.cpp)
-# add_executable(checkResult checkResult.cpp)
+add_executable(checkResult checkResult.cpp)
 
 # In order to compute single-input function
 add_executable(makeQuery makeQuery.cpp)
@@ -30,7 +30,7 @@ endif()
 
 # Link Microsoft SEAL
 target_link_libraries(keyGeneration SEAL::seal)
-# target_link_libraries(checkResult SEAL::seal)
+target_link_libraries(checkResult SEAL::seal)
 
 target_link_libraries(makeQuery SEAL::seal)
 target_link_libraries(makeQueryTwo SEAL::seal)

@@ -103,8 +103,8 @@ int main(int argc, char *argv[]){
 
   auto startEva =  chrono::high_resolution_clock::now();
 //thread work
-// omp_set_num_threads(NF);
-// #pragma omp parallel for
+omp_set_num_threads(NF);
+#pragma omp parallel for
   cout<<"search input from LUT"<<endl;
   for(int64_t i=0 ; i<row_count ; i++){
     Ciphertext res = ciphertext_query;

@@ -19,6 +19,27 @@ int64_t sqrtN(int64_t a, int64_t b){
   return n;
 }
 
+vector<vector <int64_t> > read_table(const string &filename, int64_t slot_count){
+  int64_t temp;
+	string lineStr;
+	vector<vector<int64_t> > table;
+
+  ifstream inFile(filename, ios::in);
+	while (getline(inFile, lineStr)){
+    vector<int64_t> table_col;
+		stringstream ss(lineStr);
+		string str;
+		while (getline(ss, str, ' ')){
+      temp = std::stoi(str);
+			table_col.push_back(temp);
+    }
+    if(table_col.size() != slot_count)
+      table_col.resize(slot_count);
+		table.push_back(table_col);
+	}
+  return table;
+}
+
 int main(int argc, char *argv[]){
   auto startWhole=chrono::high_resolution_clock::now();
   cout << "Setting FHE..." << flush;
@@ -52,19 +73,26 @@ int main(int argc, char *argv[]){
   cout << "Plaintext matrix row size: " << row_size << endl;
   cout << "Slot nums = " << slot_count << endl;
 
-  int64_t row_count = ceil((double)TABLE_SIZE_OUT/(double)row_size);
-  cout<<"# of row:"<<row_count<<endl;
+  int64_t table_size_in, bit_num, table_size_out;
+  cout << "*** Give the input LUT bit num:";
+  cin >> bit_num;
+  table_size_in = pow(2,bit_num);
+  table_size_out = pow(2,bit_num);
+  string bit_num_str = to_string(bit_num);
+  cout<<bit_num_str<<endl;
 
-  int64_t n_query = sqrtN(TABLE_SIZE_OUT, row_size);
+  int64_t row_count = ceil((double)table_size_in/(double)row_size); //其实是4096？2^12?
+  cout<< "row_count:"<<row_count<<endl;
+
+  int64_t n_query = sqrtN(table_size_out, row_size);
   cout<<"# of query:"<<n_query<<endl;
-
-  vector<Ciphertext> fun_tab_out;
-  ifstream readtable;
-  readtable.open("../Table/OutputTable_12bit"); /* Please change the LUT path you need */
-  for(int w = 0; w < row_count ; w++) {
-    Ciphertext tep;
-    tep.load(context, readtable);
-    fun_tab_out.push_back(tep);
+   ///////////////////////////////////////////////
+  vector<vector<int64_t>> vectorOfOutLUT = read_table("../Table/one/vectorOfOutLUT_one_"+bit_num_str+".txt", slot_count);
+  vector<Plaintext> fun_tab_out;
+  for(size_t i=0 ; i<vectorOfOutLUT.size() ; i++){
+      Plaintext temp_pt;
+      batch_encoder.encode(vectorOfOutLUT[i], temp_pt);
+      fun_tab_out.push_back(temp_pt);
   }
 
   vector<Ciphertext> query_rec;
@@ -117,8 +145,7 @@ int main(int argc, char *argv[]){
 
   cout<<"result size:"<<query_rec.size()<<endl;
 
-  Ciphertext sum_result;
-  sum_result=query_rec[0];
+  auto sum_result = query_rec[0];
   if(query_rec.size()>0){
     for(int i=1 ; i<row_count ; i++){
       evaluator.add_inplace(sum_result, query_rec[i]);

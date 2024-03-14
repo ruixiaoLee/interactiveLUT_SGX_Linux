@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
   cout << "Slot nums = " << slot_count << endl;
 
   int64_t table_size_in, bit_num, table_size_out;
-  cout << "*** Give the input LUT bit num:"<<endl;
+  cout << "*** Give the input LUT bit num:";
   cin >> bit_num;
   table_size_in = pow(2,bit_num);
   table_size_out = pow(2,bit_num);
