@@ -24,11 +24,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "seal/seal.h"
-//#include "omp.h"
+#include "omp.h"
 using namespace std;
 using namespace seal;
 
-#define NF 1 // number of threads
+// #define NF 1 // number of threads
 
 //12bit 4096
 //14bit 16384

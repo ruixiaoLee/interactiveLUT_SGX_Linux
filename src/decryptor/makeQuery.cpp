@@ -92,7 +92,6 @@ int main(int argc, char *argv[]){
 
   auto startEva = chrono::high_resolution_clock::now();
 
-  omp_set_num_threads(NF);
   #pragma omp parallel for
   for (int z=0 ; z<row_count ; z++){
     decryptor.decrypt(ct_result1[z], poly_dec_result1[z]);
