@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
   Ciphertext ciphertext_query0,ciphertext_query1,ciphertext_query2;
   Plaintext plaintext_query0,plaintext_query1,plaintext_query2;
   // result.open(s1, ios::binary);
-  result.open("Result/OutputResult", ios::binary);
+  result.open("../Result/OutputResult", ios::binary);
   ciphertext_query0.load(context, result);
   // ciphertext_query1.load(context, result);
   // ciphertext_query2.load(context, result);
