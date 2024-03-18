@@ -40,39 +40,39 @@ vector<vector <int64_t> > read_table(const string &filename, int64_t slot_count)
   return table;
 }
 
-auto PartialSum(Ciphertext<DCRTPoly> ctxt, int64_t length, int64_t num, const CryptoContext<DCRTPoly> &cryptoContext){
-  int64_t rotNum = length/num;
-  int64_t count = log2(num);
+// auto PartialSum(Ciphertext<DCRTPoly> ctxt, int64_t length, int64_t num, const CryptoContext<DCRTPoly> &cryptoContext){
+//   int64_t rotNum = length/num;
+//   int64_t count = log2(num);
 
-  for (int64_t i=0 ; i<count; i++){
-    auto ciphertextRot = ctxt;
-    int64_t t = rotNum * pow(2,i);
-    ciphertextRot = cryptoContext->EvalRotate(ctxt, t);
-    cryptoContext->EvalAddInPlace(ctxt, ciphertextRot);
-  }
-  return ctxt;
-}
+//   for (int64_t i=0 ; i<count; i++){
+//     auto ciphertextRot = ctxt;
+//     int64_t t = rotNum * pow(2,i);
+//     ciphertextRot = cryptoContext->EvalRotate(ctxt, t);
+//     cryptoContext->EvalAddInPlace(ctxt, ciphertextRot);
+//   }
+//   return ctxt;
+// }
 
 int main(int argc, char *argv[]){
   auto startWhole=chrono::high_resolution_clock::now();
   cout << "Setting FHE..." << flush;
-  ifstream parmsFile("Key/Params");
+  ifstream parmsFile("../Key/Params");
   EncryptionParameters parms(scheme_type::bfv);
   parms.load(parmsFile);
   SEALContext context(parms);
   parmsFile.close();
 
-  ifstream pkFile("Key/PublicKey");
+  ifstream pkFile("../Key/PublicKey");
   PublicKey public_key;
   public_key.unsafe_load(context,pkFile);
   pkFile.close();
 
-  ifstream galFile("Key/GaloisKey");
+  ifstream galFile("../Key/GaloisKey");
   GaloisKeys gal_keys;
   gal_keys.load(context,galFile);
   galFile.close();
 
-  ifstream relinFile("Key/RelinKey");
+  ifstream relinFile("../Key/RelinKey");
   RelinKeys relin_keys;
   relin_keys.load(context,relinFile);
   relinFile.close();
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]){
   }
 
   cout << "Reading query from DS..." << flush;
-  fstream PIRqueryFile("Result/queryPIR", fstream::in);
+  fstream PIRqueryFile("../Result/queryPIR", fstream::in);
   Ciphertext new_query0, new_query1;
   new_query0.load(context, PIRqueryFile);
   if(n_query==2)
@@ -125,16 +125,15 @@ int main(int argc, char *argv[]){
 
   ifstream readNum;
   Ciphertext ciphertext_num;
-  readNum.open("Result/RandomNum", ios::binary);
+  readNum.open("../Result/RandomNum", ios::binary);
   ciphertext_num.load(context, readNum);
   readNum.close();
 
   auto startEva = chrono::high_resolution_clock::now();
   if(n_query==1){
-  omp_set_num_threads(NF);
+  // omp_set_num_threads(NF);
   #pragma omp parallel for
     for(int64_t i=0 ; i<row_count ; i++){
-      // cout<<"No."<<i<<endl;
       Ciphertext temp = new_query0;
       evaluator.multiply_plain_inplace(temp, fun_tab_out[i]);
       evaluator.relinearize_inplace(temp, relin_keys);
@@ -142,10 +141,9 @@ int main(int argc, char *argv[]){
     }
   }
   if(n_query==2){
-  omp_set_num_threads(NF);
+  // omp_set_num_threads(NF);
   #pragma omp parallel for
     for(int64_t i=0 ; i<row_count ; i++){
-      // cout<<"No."<<i<<endl;
       Ciphertext temp = new_query1;
       evaluator.rotate_rows_inplace(temp, -i, gal_keys);
       evaluator.multiply_inplace(temp, new_query0);
@@ -172,8 +170,8 @@ int main(int argc, char *argv[]){
   for (int64_t i=0 ; i<count; i++){
     auto ciphertextRot = sum_result;
     int64_t t = rotNum * pow(2,i);
-    ciphertextRot = cryptoContext->EvalRotate(sum_result, t);
-    cryptoContext->EvalAddInPlace(sum_result, ciphertextRot);
+    evaluator.rotate_rows_inplace(sum_result, t, gal_keys);
+    evaluator.add_inplace(sum_result, ciphertextRot);
   }
 
   // Ciphertext sum_result;
@@ -183,7 +181,6 @@ int main(int argc, char *argv[]){
   //     evaluator.add_inplace(sum_result, query_rec[i]);
   //   }
   // }
-
   // // totalSum
   // for(int64_t i=0 ; i<log2(row_size) ; i++){
   //      Ciphertext ct = sum_result;
@@ -191,7 +188,6 @@ int main(int argc, char *argv[]){
   //      // evaluator.relinearize_inplace(ct, relin_keys);
   //      evaluator.add_inplace(sum_result, ct);
   // }
-
   // evaluator.add_inplace(sum_result, ciphertext_num);
 
   auto endEva=chrono::high_resolution_clock::now();
@@ -199,7 +195,7 @@ int main(int argc, char *argv[]){
   //write Final_result in a file
   cout << "Saving final result..." << flush;
   ofstream Final_result;
-  Final_result.open("Result/OutputResult", ios::binary);
+  Final_result.open("../Result/OutputResult", ios::binary);
   //Final_result << fin_res ;
   sum_result.save(Final_result);
   Final_result.close();

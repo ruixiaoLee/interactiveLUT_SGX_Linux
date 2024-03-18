@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
 
   auto startEva = chrono::high_resolution_clock::now();
   if(n_query==1){
-    omp_set_num_threads(NF);
+    // omp_set_num_threads(NF);
     #pragma omp parallel for
     for(int64_t i=0 ; i<row_count ; i++){
       // cout<<"No."<<i<<endl;
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]){
     }
   }
   if(n_query==2){
-    omp_set_num_threads(NF);
+    // omp_set_num_threads(NF);
     #pragma omp parallel for
     for(int64_t i=0 ; i<row_count ; i++){
       // cout<<"No."<<i<<endl;
@@ -156,7 +156,6 @@ int main(int argc, char *argv[]){
   for(int64_t i=0 ; i<log2(row_size) ; i++){
        Ciphertext ct = sum_result;
        evaluator.rotate_rows_inplace(ct, -pow(2,i), gal_keys);
-       // evaluator.relinearize_inplace(ct, relin_keys);
        evaluator.add_inplace(sum_result, ct);
   }
   evaluator.add_inplace(sum_result, ciphertext_num);
@@ -176,7 +175,7 @@ int main(int argc, char *argv[]){
   chrono::duration<double> diffWhole = endWhole-startWhole;
   cout << "Processing time is: " << diffEva.count() << "s" << endl;
   cout << "Whole runtime is: " << diffWhole.count() << "s" << endl;
-  show_memory_usage(getpid());
+  // show_memory_usage(getpid());
 
   return 0;
 }
